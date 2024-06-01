@@ -1,0 +1,40 @@
++------------------------------------------------------------------------------+
+|                          Welcome to Fellowship of Code:                      |
+|                        A Java Adventure in Middle Earth!                     |
++------------------------------------------------------------------------------+
+|                                                                              |
++-------------------------------- Instructions --------------------------------+
+| 1. Your mission is to guide the Fellowship through                           |
+|    a labyrinth in Middle Earth.                                              |
+|                                                                              | 
+| 2. The Fellowship consists of a hobbit (leader) and                          |
+|    up to 3 additional members (elves or dwarves).                            |
+|                                                                              |
+| 3. The objective is to deliver a secret code stored                          |
+|    on a floppy disk to a Java wizard on Mount Api.                           |
+|                                                                              |
+| 4. During the journey, the Fellowship will encounter                         |
+|    orcs, trolls, and goblins trying to steal the code.                       |
+|                                                                              |
+| 5. Each member of the Fellowship has a specific power rating:                |
+|    - Hobbit: 3 points (special weapon available)                             |
+|    - Elf: 5 points (special weapon available)                                |
+|    - Dwarf: 7 points (no special weapon)                                     |
+|                                                                              |
+| 6. Evil creatures also have power ratings:                                   |
+|    - Orc: 5 points                                                           |
+|    - Troll: 9 points                                                         |
+|    - Goblin: 3 points                                                        |
+|                                                                              |
+| 7. Navigate through the caves, choose which member will                      |
+|    fight when encountering creatures, and try to reach Mount Api.            |
+|                                                                              |
+| 8. Each cave is connected to other caves in the labyrinth;                   |
+|    some caves may lead directly to Mount Api.                                |
+|                                                                              |
+| 9. The game ends when either the code is successfully delivered              |
+|    to Mount Api or all Fellowship members perish.                            |
++------------------------------------------------------------------------------+
+
+Good luck, Brave adventurer! 
+May your code remain safe and your journey be victorious.
