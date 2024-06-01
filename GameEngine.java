@@ -83,6 +83,8 @@ public class GameEngine
         fellowship.addMember(LightCreatureType.HOBBIT, true);
         buildFellowship(fellowship);
 
+        gameInterface.printMessage("\nThe Fellowship has been assembled. The quest begins!");
+
         while (!isGameOver()) 
         {
             processCave(fellowship, labyrinth, currentCaveId);
@@ -185,7 +187,6 @@ public class GameEngine
             boolean useSpecialWeapon = gameInterface.promptYesOrNo("Do you want to use the special weapon?");
             if (useSpecialWeapon) 
             {
-                
                 specialFight(fellowship, lightCreature, darkCreature);
             } 
             else 
@@ -203,6 +204,7 @@ public class GameEngine
 
     private void specialFight(Fellowship fellowship, LightCreature lightCreature, DarkCreature darkCreature) 
     {
+        lightCreature.useSpecialWeapon();
         gameInterface.printMessage(lightCreature.getName() + " vanquished " + darkCreature.getName() + " with their special weapon!");
         darkCreature.kill();
 
@@ -292,7 +294,7 @@ public class GameEngine
 
     private void addMemberToFellowship(Fellowship fellowship, List<LightCreatureType> lightCreatureTypes, List<String> lightCreatureTypeNames) 
     {
-        int index = promptOptionsMenu(lightCreatureTypeNames);
+        int index = gameInterface.promptOptionsMenu(lightCreatureTypeNames);
         LightCreatureType selectedType = lightCreatureTypes.get(index);
         gameInterface.printMessage("You have selected " + selectedType.getName() + " to join your Fellowship.");
         fellowship.addMember(selectedType, false);
@@ -300,29 +302,68 @@ public class GameEngine
 
     private int selectNextCave(Labyrinth labyrinth, int currentCaveId) 
     {
+        Cave currentCave = labyrinth.getCave(currentCaveId);
+        int[] connectedCaves = currentCave.getConnectedCaves();
+    
+        // Identify connected caves
+        boolean north = connectedCaves[0] != 0;
+        boolean east  = connectedCaves[1] != 0;
+        boolean south = connectedCaves[2] != 0;
+        boolean west  = connectedCaves[3] != 0;
+    
+        // Build the cave map UI
+        String caveMap = buildCaveMap(north, east, south, west);
+
         gameInterface.printMessage("\nYou have explored Cave " + currentCaveId + ".");
         gameInterface.printMessage("Now, you must choose the next cave to venture into.");
         gameInterface.printMessage("Each cave holds its own secrets and challenges. Choose wisely.");
-        
-        Cave currentCave = labyrinth.getCave(currentCaveId);
-        int[] connectedCaves = currentCave.getConnectedCaves();
-
-        List<Integer> validCaveIds = Arrays.stream(connectedCaves)
-                .boxed()
-                .filter(caveId -> caveId != 0)
-                .collect(Collectors.toList());
-
-        List<String> validCaveIdNames = validCaveIds.stream()
-                .map(caveId -> "Proceed to Cave " + caveId)
-                .collect(Collectors.toList());
-
-        int index = promptOptionsMenu(validCaveIdNames);
-        int nextCaveId = validCaveIds.get(index);
-
+        gameInterface.printMessage(caveMap);
+    
+        // Prepare list of options for the user to select
+        List<String> directions = new ArrayList<>();
+        List<Integer> nextCaveIds = new ArrayList<>();
+    
+        if (north) 
+        {
+            directions.add("Proceed North to Cave " + connectedCaves[0]);
+            nextCaveIds.add(connectedCaves[0]);
+        }
+        if (east) {
+            directions.add("Proceed East to Cave " + connectedCaves[1]);
+            nextCaveIds.add(connectedCaves[1]);
+        }
+        if (south) {
+            directions.add("Proceed South to Cave " + connectedCaves[2]);
+            nextCaveIds.add(connectedCaves[2]);
+        }
+        if (west) {
+            directions.add("Proceed West to Cave " + connectedCaves[3]);
+            nextCaveIds.add(connectedCaves[3]);
+        }
+    
+        // Prompt the user to select a direction
+        int index = gameInterface.promptOptionsMenu(directions);
+        int nextCaveId = nextCaveIds.get(index);
+    
         gameInterface.printMessage("The Fellowship advances to Cave " + nextCaveId + ", ready for the unknown.");
         return nextCaveId;
     }
-
+    
+    private String buildCaveMap(boolean north, boolean east, boolean south, boolean west) {
+        StringBuilder caveMap = new StringBuilder();
+    
+        caveMap.append("\n");
+        caveMap.append(String.format("            +--%s--+     \n" , north ? "N" :"-"));
+        caveMap.append(String.format("            |     |      \n"));
+        caveMap.append(String.format("       +----+     +----+  \n"));
+        caveMap.append(String.format("       %s       @       %s \n", west ? "W" : "|", east ? "E" : "|"));
+        caveMap.append(String.format("       +----+     +----+  \n"));
+        caveMap.append(String.format("            |     |      \n"));
+        caveMap.append(String.format("            +--%s--+       " , south ? "S" : "-"));
+    
+        return caveMap.toString();
+    }
+    
     private LightCreature selectFellowshipMemberForFight(Fellowship fellowship) 
     {
         gameInterface.printMessage("\nSelect a member of your Fellowship to fight the creature.");
@@ -337,15 +378,10 @@ public class GameEngine
                 .map(LightCreature::getName)
                 .collect(Collectors.toList());
 
-        int index = promptOptionsMenu(aliveMemberNames);
+        int index = gameInterface.promptOptionsMenu(aliveMemberNames);
         LightCreature selectedLightCreature = aliveMembers.get(index);
         gameInterface.printMessage("Brave " + selectedLightCreature.getName() + " steps forward to face the challenge.");
         return selectedLightCreature;
-    }
-
-    private int promptOptionsMenu(List<String> options) 
-    {
-        return gameInterface.promptOptionsMenu(options);
     }
 
     private double winProbabilityOfLightCreature(LightCreature lightCreature, DarkCreature darkCreature) 
